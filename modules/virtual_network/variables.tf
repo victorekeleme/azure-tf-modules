@@ -1,3 +1,13 @@
+variable "subscription_id" {
+  type    = string
+  default = null
+}
+
+variable "tenant_id" {
+  type    = string
+  default = null
+}
+
 variable "resource_group_name" {
   type    = string
   default = null
