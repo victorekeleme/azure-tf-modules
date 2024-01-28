@@ -1,5 +1,5 @@
 resource "azurerm_virtual_network" "this" {
-  name                = "${local.resource_prefix}-${var.vnet_name}-vnet"
+  name                = local.vnet_name
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
   address_space       = var.vnet_address_space
@@ -9,7 +9,7 @@ resource "azurerm_virtual_network" "this" {
 
 resource "azurerm_subnet" "this" {
   for_each             = var.subnets != null ? var.subnets : {}
-  name                 = "${local.resource_prefix}-${count.index}-subnet"
+  name                 = "${local.resource_prefix}-${each.key}-subnet"
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
   private_endpoint_network_policies_enabled = false

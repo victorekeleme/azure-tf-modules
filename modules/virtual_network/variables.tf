@@ -30,7 +30,7 @@ variable "vnet_address_space" {
 
 variable "subnets" {
   type    = map(list(string))
-  default = null
+  default = {}
 }
 
 variable "subnet_routes" {
@@ -39,7 +39,7 @@ variable "subnet_routes" {
     next_hop_type          = string
     next_hop_in_ip_address = string
   })))
-  default = null
+  default = {}
 }
 
 variable "subnet_service_delegation" {
@@ -47,7 +47,7 @@ variable "subnet_service_delegation" {
     name    = string
     actions = list(string)
   })))
-  default = null
+  default = {}
 }
 
 variable "natgw_subnets" {
