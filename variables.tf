@@ -40,14 +40,14 @@ variable "vnet_address_space" {
 
 
 variable "subnets" {
-  type = map(list(string))
+  type    = map(list(string))
   default = {}
 }
 
 variable "subnet_routes" {
   type = map(map(object({
-    address_prefix = string
-    next_hop_type = string
+    address_prefix         = string
+    next_hop_type          = string
     next_hop_in_ip_address = string
   })))
   default = {}
@@ -55,7 +55,7 @@ variable "subnet_routes" {
 
 variable "subnet_service_delegation" {
   type = map(map(object({
-    name = string
+    name    = string
     actions = list(string)
   })))
   default = {}
