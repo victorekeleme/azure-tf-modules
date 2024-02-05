@@ -65,3 +65,10 @@ variable "natgw_subnets" {
   default = null
 }
 
+variable "subnet_inbound_ports" {
+  type = map(list(string))
+  default = {
+    "public"  = ["22", "80", "443"]
+    "private" = ["22", "8080", "443"]
+  }
+}

@@ -2,9 +2,12 @@
 
 locals {
   resource_prefix     = "${var.product_name}-${var.environment}"
-  resource_group_name = "${var.product_name}-${var.resource_group_location}"
-  vnet_name           = "${var.product_name}-${var.resource_group_location}-${var.vnet_name}"
-
+  vm_name             = "${local.resource_prefix}-${var.vm_name}"
+  
+  vm_size = {
+    lower_env = "Standard_Bs2"
+    prod_env = "Standard_D2s_v3"
+  }
   common_tags = {
     product_name = var.product_name
     environment  = var.environment

@@ -8,13 +8,13 @@ resource "azurerm_virtual_network" "this" {
 }
 
 resource "azurerm_subnet" "this" {
-  for_each             = var.subnets != null ? var.subnets : {}
-  name                 = "${local.resource_prefix}-${each.key}-subnet"
-  resource_group_name  = azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.this.name
-  private_endpoint_network_policies_enabled = false
+  for_each                                      = var.subnets != null ? var.subnets : {}
+  name                                          = "${local.resource_prefix}-${each.key}-subnet"
+  resource_group_name                           = azurerm_resource_group.this.name
+  virtual_network_name                          = azurerm_virtual_network.this.name
+  private_endpoint_network_policies_enabled     = false
   private_link_service_network_policies_enabled = false
-  address_prefixes     = each.value
+  address_prefixes                              = each.value
 
   dynamic "delegation" {
     for_each = contains(keys(var.subnet_service_delegation), each.key) ? var.subnet_service_delegation[each.key] : ({})
@@ -55,7 +55,7 @@ resource "azurerm_subnet_route_table_association" "this" {
 }
 
 resource "azurerm_nat_gateway" "this" {
-  for_each = var.natgw_subnets != null ? toset(var.natgw_subnets) : []
+  for_each            = var.natgw_subnets != null ? toset(var.natgw_subnets) : []
   name                = "${local.resource_prefix}-${each.key}-natgw"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
@@ -65,4 +65,36 @@ resource "azurerm_subnet_nat_gateway_association" "this" {
   for_each       = var.natgw_subnets != null ? toset(var.natgw_subnets) : []
   subnet_id      = azurerm_subnet.this[each.key].id
   nat_gateway_id = azurerm_nat_gateway.this[each.key].id
+}
+
+
+# Subnet and network security group association
+resource "azurerm_subnet_network_security_group_association" "this" {
+  for_each = azurerm_subnet.this
+  subnet_id                 = azurerm_subnet.this[each.key].id
+  network_security_group_id = azurerm_network_security_group.this[each.key].id
+}
+
+# Network security group resource for subnets
+resource "azurerm_network_security_group" "this" {
+  for_each            = azurerm_subnet.this
+  name                = "${local.resource_prefix}-${each.key}-nsg"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
+
+  # Network security group rule resource subnets
+  dynamic "security_rule" {
+    for_each = contains(keys(var.subnet_inbound_ports), each.key) ? var.subnet_inbound_ports[each.key] : []
+    content {
+      name                       = "${each.key}-nsg-rule-${security_rule.value}"
+      priority                   = sum([100, security_rule.key])
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = security_rule.value
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+  }
 }
