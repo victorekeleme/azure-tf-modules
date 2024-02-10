@@ -6,8 +6,7 @@ resource_group_location = "eastus"
 product_name            = "devopsvault"
 environment             = "dev"
 
-vm_nic_name = "vm-nic"
-vm_name = "app"
+vm_name = "wordpress"
 vm_count = 2
 admin_username = "admin_user"
 public_key_location = "~/.ssh/id_rsa.pub"

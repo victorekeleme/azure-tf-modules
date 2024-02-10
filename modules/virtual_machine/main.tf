@@ -31,14 +31,14 @@ resource "azurerm_linux_virtual_machine" "this" {
 
 resource "azurerm_network_interface" "this" {
   count = var.vm_count
-  name                = "${var.vm_nic_name}-${count.index}"
+  name                = "${local.vm_name}-nic-${count.index}"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
 
   ip_configuration {
-    name                          = "vm-ip-${count.index}"
+    name                          = "${local.vm_name}-ip-${count.index}"
     subnet_id                     = data.azurerm_subnet.public_subnet_name.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = var.private_ip_allocation != null ?  var.private_ip_allocation : "Dynamic"
     public_ip_address_id =  var.is_vm_private ? null : azurerm_public_ip.this[count.index].id
   }
 
@@ -48,7 +48,7 @@ resource "azurerm_network_interface" "this" {
 
 resource "azurerm_public_ip" "this" {
   count = var.is_vm_private ? 0 : var.vm_count
-  name                = "${var.vm_name}-pub-ip"
+  name                = "${local.vm_name}-pub-ip"
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   allocation_method   = "Static"

@@ -52,11 +52,6 @@ variable "is_vm_private" {
   default = false
 }
 
-variable "vm_nic_name" {
-  type    = string
-  default = "vm_nic"
-}
-
 variable "vm_name" {
   type    = string
   default = "vm"
@@ -85,4 +80,9 @@ variable "source_image_ref" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+}
+
+variable "private_ip_allocation" {
+  type = string
+  default = null
 }
