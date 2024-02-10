@@ -1,16 +1,16 @@
 variable "hub_vnet_name" {
-  type = string
-  default = "devopsvault-eastus-hub-vnet"
+  type    = string
+  default = "devopsvault-dev-hub-vnet"
 }
 
 variable "hub_vnet_name_rg" {
-  type = string
+  type    = string
   default = "devopsvault-eastus-hub-vnet-rg"
 }
 
-variable "public_subnet_name" {
-  type = string
-  default = "devopsvault-dev-public-subnet"
+variable "subnet_name" {
+  type    = string
+  default = "public-subnet"
 }
 
 variable "subscription_id" {
@@ -39,37 +39,37 @@ variable "product_name" {
 }
 
 variable "owner" {
-  type = string
-  default = "null"
+  type    = string
+  default = "Victor Ekeleme"
 }
 
 variable "team" {
-  type = string
-  default = "null"
+  type    = string
+  default = "DevOps"
 }
 
 variable "environment" {
   type    = string
   default = null
   validation {
-    condition = contains(["dev","staging","prod"], lower(var.environment)) 
+    condition     = contains(["dev", "staging", "prod"], lower(var.environment))
     error_message = "We only use the following environments dev || staging || prod)"
   }
 }
 
-variable "is_vm_private" {
-  type = bool
-  default = false
-}
-
-variable "vm_name" {
+variable "vmss_name" {
   type    = string
-  default = "vm"
+  default = "app-server"
 }
 
-variable "vm_count" {
-  type = number
+variable "instance_count" {
+  type    = number
   default = null
+}
+
+variable "vm_sku" {
+  type    = string
+  default = "Standard_F2"
 }
 
 variable "admin_username" {
@@ -83,7 +83,7 @@ variable "public_key_location" {
 }
 
 variable "source_image_ref" {
-  type    = map(string)
+  type = map(string)
   default = {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
@@ -92,7 +92,12 @@ variable "source_image_ref" {
   }
 }
 
-variable "private_ip_allocation" {
-  type = string
-  default = null
-}
+# variable "private_ip_allocation" {
+#   type = string
+#   default = null
+# }
+
+# variable "is_vmss_private" {
+#   type = bool
+#   default = true
+# }

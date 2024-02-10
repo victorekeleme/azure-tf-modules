@@ -1,13 +1,9 @@
 # product-env-appname
 
 locals {
-  resource_prefix     = "${var.product_name}-${var.environment}"
-  vm_name             = "${local.resource_prefix}-${var.vm_name}"
-  
-  vm_size = {
-    lower_env = "Standard_Bs2"
-    prod_env = "Standard_D2s_v3"
-  }
+  resource_prefix = "${var.product_name}-${var.environment}"
+  lb_name         = "${local.resource_prefix}-${var.lb_name}-lb"
+
   common_tags = {
     product_name = var.product_name
     environment  = var.environment
@@ -16,4 +12,3 @@ locals {
     team         = var.team
   }
 }
-
