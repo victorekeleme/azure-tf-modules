@@ -9,7 +9,7 @@ resource "azurerm_virtual_network" "this" {
 
 resource "azurerm_subnet" "this" {
   for_each                                      = var.subnets != null ? var.subnets : {}
-  name                                          = "${local.resource_prefix}-${each.key}-subnet"
+  name                                          = "${each.key}-subnet"
   resource_group_name                           = azurerm_resource_group.this.name
   virtual_network_name                          = azurerm_virtual_network.this.name
   private_endpoint_network_policies_enabled     = false
@@ -31,7 +31,7 @@ resource "azurerm_subnet" "this" {
 
 resource "azurerm_route_table" "this" {
   for_each                      = azurerm_subnet.this
-  name                          = "${local.resource_prefix}-${each.key}-rtb"
+  name                          = "${each.key}-rtb"
   location                      = azurerm_resource_group.this.location
   resource_group_name           = azurerm_resource_group.this.name
   disable_bgp_route_propagation = true
@@ -56,7 +56,7 @@ resource "azurerm_subnet_route_table_association" "this" {
 
 resource "azurerm_nat_gateway" "this" {
   for_each            = var.natgw_subnets != null ? toset(var.natgw_subnets) : []
-  name                = "${local.resource_prefix}-${each.key}-natgw"
+  name                = "${each.key}-natgw"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
 }
@@ -70,7 +70,7 @@ resource "azurerm_subnet_nat_gateway_association" "this" {
 
 # Subnet and network security group association
 resource "azurerm_subnet_network_security_group_association" "this" {
-  for_each = azurerm_subnet.this
+  for_each                  = azurerm_subnet.this
   subnet_id                 = azurerm_subnet.this[each.key].id
   network_security_group_id = azurerm_network_security_group.this[each.key].id
 }
@@ -78,7 +78,7 @@ resource "azurerm_subnet_network_security_group_association" "this" {
 # Network security group resource for subnets
 resource "azurerm_network_security_group" "this" {
   for_each            = azurerm_subnet.this
-  name                = "${local.resource_prefix}-${each.key}-nsg"
+  name                = "${each.key}-nsg"
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
 

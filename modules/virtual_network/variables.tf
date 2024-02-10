@@ -23,9 +23,23 @@ variable "product_name" {
   default = null
 }
 
+variable "owner" {
+  type    = string
+  default = "Victor Ekeleme"
+}
+
+variable "team" {
+  type    = string
+  default = "DevOps"
+}
+
 variable "environment" {
   type    = string
   default = null
+  validation {
+    condition     = contains(["dev", "staging", "prod"], lower(var.environment))
+    error_message = "We only use the following environments dev || staging || prod)"
+  }
 }
 
 variable "vnet_name" {
