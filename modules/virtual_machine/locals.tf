@@ -5,8 +5,8 @@ locals {
   vm_name             = "${local.resource_prefix}-${var.vm_name}"
   
   vm_size = {
-    lower_env = "Standard_Bs2"
-    prod_env = "Standard_D2s_v3"
+    nonprod = "Standard_B2s"
+    prod = "Standard_D2s_v3"
   }
   common_tags = {
     product_name = var.product_name

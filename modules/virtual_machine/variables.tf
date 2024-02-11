@@ -1,6 +1,6 @@
 variable "hub_vnet_name" {
   type = string
-  default = "devopsvault-eastus-hub-vnet"
+  default = "devopsvault-dev-hub-vnet"
 }
 
 variable "hub_vnet_name_rg" {
@@ -8,9 +8,9 @@ variable "hub_vnet_name_rg" {
   default = "devopsvault-eastus-hub-vnet-rg"
 }
 
-variable "public_subnet_name" {
+variable "subnet_name" {
   type = string
-  default = "devopsvault-dev-public-subnet"
+  default = "public-subnet"
 }
 
 variable "subscription_id" {
@@ -40,12 +40,12 @@ variable "product_name" {
 
 variable "owner" {
   type = string
-  default = "null"
+  default = "Victor Ekeleme"
 }
 
 variable "team" {
   type = string
-  default = "null"
+  default = "DevOps"
 }
 
 variable "environment" {

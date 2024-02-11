@@ -4,9 +4,9 @@ resource "azurerm_public_ip" "this" {
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
   allocation_method   = "Static"
-  sku                     = "Standard"
+  sku                     = var.lb_sku
   sku_tier                = "Regional"
-  #   domain_name_label   = azurerm_resource_group.example.name
+  # domain_name_label   = azurerm_resource_group.example.name
 
   tags = local.common_tags
 }
@@ -15,7 +15,7 @@ resource "azurerm_lb" "this" {
   name                = local.lb_name
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
-  sku = "Standard"
+  sku = var.lb_sku
 
   frontend_ip_configuration {
     name                 = var.is_lb_private ? "${local.lb_name}-ip" : "${local.lb_name}-ip"
@@ -33,10 +33,10 @@ resource "azurerm_lb_backend_address_pool" "this" {
 }
 
 resource "azurerm_lb_probe" "this" {
-  for_each = var.lb_rules_probe != null ? var.lb_rules_probe : {}
+  for_each = var.lb_probe != null ? var.lb_probe : {}
   loadbalancer_id     = azurerm_lb.this.id
-  name                = "lb_${each.key}_probe"
-  port                = each.value.backend_port
+  name                = "${each.key}-probe"
+  port                = each.value.port
   protocol            = each.value.protocol
   interval_in_seconds = each.value.interval_in_seconds
   probe_threshold     = each.value.probe_threshold
@@ -44,14 +44,22 @@ resource "azurerm_lb_probe" "this" {
 }
 
 resource "azurerm_lb_rule" "this" {
-  for_each = var.lb_rules_probe != null ? var.lb_rules_probe : {}
-  name                           = "${local.lb_name}-${each.key}-lb_rule"
+  for_each = var.lb_rules != null ? var.lb_rules : {}
+  name                           = "${each.key}-rule"
   protocol                       = each.value.protocol
   frontend_port                  = each.value.frontend_port
   backend_port                   = each.value.backend_port
   loadbalancer_id                = azurerm_lb.this.id
   frontend_ip_configuration_name = azurerm_lb.this.frontend_ip_configuration[0].name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.this.id]
-  probe_id                       = azurerm_lb_probe.this[each.key].id
+  probe_id                       = contains(keys(var.lb_probe), each.value.probe_id) ? azurerm_lb_probe.this[each.value.probe_id].id : null
 }
+
+resource "azurerm_network_interface_backend_address_pool_association" "this" {
+  for_each = data.terraform_remote_state.vm_remote_state.outputs.virtual_machine_nic_ids
+  network_interface_id ="${each.key}"
+  ip_configuration_name = "${each.value[0].name}"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.this.id
+}
+
 

@@ -5,8 +5,8 @@ resource_group_name     = "lb"
 resource_group_location = "eastus"
 product_name            = "devopsvault"
 environment             = "dev"
-subnet_name = "private-subnet"
+subnet_name = "public-subnet"
 
-lb_name = "private"
-is_lb_private = true
+lb_name = "public"
+is_lb_private = false
 private_static_ip = "10.0.10.10"
