@@ -92,6 +92,17 @@ variable "source_image_ref" {
   }
 }
 
+variable "lb_be_pool_ids" {
+  type = list(string)
+  default = null
+}
+
+variable "nic_inbound_ports" {
+  type = list(string)
+  default = [ "8080", "22" ]
+}
+
+
 # variable "private_ip_allocation" {
 #   type = string
 #   default = null

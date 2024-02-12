@@ -8,6 +8,7 @@ environment             = "dev"
 
 vm_name = "wordpress"
 vm_count = 2
+is_vm_private = true
 admin_username = "admin_user"
 public_key_location = "~/.ssh/id_rsa.pub"
 source_image_ref = {

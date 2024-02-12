@@ -92,7 +92,17 @@ variable "source_image_ref" {
   }
 }
 
+variable "private_static_ip" {
+  type = string
+  default = null
+}
+
 variable "private_ip_allocation" {
   type = string
   default = null
+}
+
+variable "nic_inbound_ports" {
+  type = list(string)
+  default = [ "8080", "22" ]
 }

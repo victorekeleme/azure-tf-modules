@@ -9,9 +9,17 @@ resource "azurerm_availability_set" "this" {
 }
 
 
+resource "azurerm_public_ip" "this" {
+  count = var.is_vm_private ? 0 : var.vm_count
+  name                = "${local.vm_name}-pub-ip-${sum([count.index, 1])}"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
+  allocation_method   = "Static"
+}
+
 resource "azurerm_linux_virtual_machine" "this" {
   count = var.vm_count != null ? var.vm_count : 1
-  name                = "${local.vm_name}-${count.index}"
+  name                = "${local.vm_name}-${sum([count.index, 1])}"
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   size                = var.environment != "prod" ? local.vm_size.nonprod : local.vm_size.prod
@@ -42,26 +50,49 @@ resource "azurerm_linux_virtual_machine" "this" {
 }
 
 resource "azurerm_network_interface" "this" {
-  count = var.vm_count
-  name                = "${local.vm_name}-nic-${count.index}"
+  count = var.vm_count # Using length(azurerm_linux_virtual_machine.this) gives a Cycle Error
+  name                = "${local.vm_name}-nic-${sum([count.index, 1])}"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
 
   ip_configuration {
-    name                          = "${local.vm_name}-ip-${count.index}"
+    name                          = "${local.vm_name}-ip-${sum([count.index, 1])}"
     subnet_id                     = data.azurerm_subnet.subnet_name.id
     private_ip_address_allocation = var.private_ip_allocation != null ?  var.private_ip_allocation : "Dynamic"
     public_ip_address_id =  var.is_vm_private ? null : azurerm_public_ip.this[count.index].id
+    private_ip_address            = var.is_vm_private ? var.private_static_ip : null
   }
 
   tags = local.common_tags
 }
 
-
-resource "azurerm_public_ip" "this" {
-  count = var.is_vm_private ? 0 : var.vm_count
-  name                = "${local.vm_name}-pub-ip-${count.index}"
+# Network security group resource for vmss network interface
+resource "azurerm_network_security_group" "this" {
+  count = length(azurerm_network_interface.this)
+  name                = "${local.vm_name}-vm-nsg-${sum([count.index, 1])}"
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
-  allocation_method   = "Static"
+
+  # Network security group rule resource
+  dynamic "security_rule" {
+    for_each = var.nic_inbound_ports != null ? var.nic_inbound_ports : []
+    content {
+      name                       = "vm-nsg-rule-${sum([security_rule.key, 1])}"
+      priority                   = sum([100, security_rule.key])
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = security_rule.value
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+  }
+}
+
+
+resource "azurerm_network_interface_security_group_association" "this" {
+  count = length(azurerm_network_interface.this)   
+  network_interface_id = azurerm_network_interface.this[count.index].id
+  network_security_group_id = azurerm_network_security_group.this[count.index].id
 }
