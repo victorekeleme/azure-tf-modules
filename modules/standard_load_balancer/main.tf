@@ -41,6 +41,7 @@ resource "azurerm_lb_probe" "this" {
   interval_in_seconds = each.value.interval_in_seconds
   probe_threshold     = each.value.probe_threshold
   number_of_probes    = each.value.number_of_probes
+  request_path = each.value.protocol == "Http" ? each.value.request_path : null
 }
 
 resource "azurerm_lb_rule" "this" {
@@ -55,11 +56,11 @@ resource "azurerm_lb_rule" "this" {
   probe_id                       = contains(keys(var.lb_probe), each.value.probe_id) ? azurerm_lb_probe.this[each.value.probe_id].id : null
 }
 
-resource "azurerm_network_interface_backend_address_pool_association" "this" {
-  for_each = data.terraform_remote_state.vm_remote_state.outputs.virtual_machine_nic_ids
-  network_interface_id ="${each.key}"
-  ip_configuration_name = "${each.value[0].name}"
-  backend_address_pool_id = azurerm_lb_backend_address_pool.this.id
-}
+# resource "azurerm_network_interface_backend_address_pool_association" "this" {
+#   for_each = local.virtual_machine_nic_ids != null ? local.virtual_machine_nic_ids : []
+#   network_interface_id ="${each.key}"
+#   ip_configuration_name = "${each.value[0].name}"
+#   backend_address_pool_id = azurerm_lb_backend_address_pool.this.id
+# }
 
 

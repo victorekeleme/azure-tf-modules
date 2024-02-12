@@ -57,21 +57,6 @@ variable "environment" {
   }
 }
 
-variable "vm_nic_count" {
-  type = map
-  default = null
-}
-
-variable "vm_name" {
-  type = string
-  default = null
-}
-
-variable "vm_rg_name" {
-  type = string
-  default = null
-}
-
 variable "lb_name" {
   type    = string
   default = null
@@ -124,6 +109,7 @@ variable "lb_probe" {
       interval_in_seconds = 5
       number_of_probes  = 4
       probe_threshold = 3
+      request_path = "/"
     }
   }
 }
