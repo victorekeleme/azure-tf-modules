@@ -7,11 +7,11 @@ resource "azurerm_private_dns_zone" "this" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   depends_on            = [azurerm_private_dns_zone.this]
-  for_each              = var.virtual_network_ids != null ? toset(var.virtual_network_ids) : []
+  for_each              = var.virtual_network_ids != null ? var.virtual_network_ids : {}
   name                  = "${each.key}-vnet-link"
   resource_group_name   = azurerm_resource_group.this.name
   private_dns_zone_name = azurerm_private_dns_zone.this.name
-  virtual_network_id    = data.terraform_remote_state.vnet_data.outputs.vnet_id
+  virtual_network_id    = "${each.value}"
 
   tags = local.common_tags
 }

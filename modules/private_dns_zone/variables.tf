@@ -63,7 +63,7 @@ variable "private_dns_zone_name" {
 }
 
 variable "virtual_network_ids" {
-  type    = list(string)
+  type    = map
   default = null
 }
 

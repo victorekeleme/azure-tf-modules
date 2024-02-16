@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "this" {
-  count = var.is_lb_private ? 0 : 1
+  count = var.is_lb_internal ? 0 : 1
   name                = "${local.lb_name}-ip"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
@@ -18,12 +18,12 @@ resource "azurerm_lb" "this" {
   sku = var.lb_sku
 
   frontend_ip_configuration {
-    name                 = var.is_lb_private ? "${local.lb_name}-ip" : "${local.lb_name}-ip"
-    public_ip_address_id = var.is_lb_private ? null : azurerm_public_ip.this[0].id
-    private_ip_address_allocation = var.is_lb_private ? "Static" : null
-    private_ip_address_version    = var.is_lb_private ? (var.private_ip_version != null ? var.private_ip_version : "IPv4") : null
-    private_ip_address            = var.is_lb_private ? var.private_static_ip : null
-    subnet_id = var.is_lb_private ? data.azurerm_subnet.subnet_name.id : null
+    name                 = var.is_lb_internal ? "${local.lb_name}-ip" : "${local.lb_name}-ip"
+    public_ip_address_id = var.is_lb_internal ? null : azurerm_public_ip.this[0].id
+    private_ip_address_allocation = var.is_lb_internal ? var.private_ip_addr_alloc : null
+    private_ip_address_version    = var.is_lb_internal ? (var.private_ip_version != null ? var.private_ip_version : "IPv4") : null
+    private_ip_address            = var.is_lb_internal ? (var.private_ip_addr_alloc == "Static" ? var.private_static_ip : null) : null
+    subnet_id = var.is_lb_internal ? (var.subnet_id != null ? var.subnet_id : null ) : null
   }
 }
 
@@ -57,7 +57,7 @@ resource "azurerm_lb_rule" "this" {
 }
 
 # resource "azurerm_network_interface_backend_address_pool_association" "this" {
-#   for_each = local.virtual_machine_nic_ids != null ? local.virtual_machine_nic_ids : []
+#   for_each = var.virtual_machine_nic_ids != null ? var.virtual_machine_nic_ids : []
 #   network_interface_id ="${each.key}"
 #   ip_configuration_name = "${each.value[0].name}"
 #   backend_address_pool_id = azurerm_lb_backend_address_pool.this.id

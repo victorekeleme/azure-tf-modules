@@ -8,9 +8,9 @@ variable "hub_vnet_name_rg" {
   default = "devopsvault-eastus-hub-vnet-rg"
 }
 
-variable "subnet_name" {
+variable "subnet_id" {
   type    = string
-  default = "public-subnet"
+  default = null
 }
 
 variable "subscription_id" {
@@ -67,7 +67,7 @@ variable "lb_sku" {
   default = "Basic"
 }
 
-variable "is_lb_private" {
+variable "is_lb_internal" {
   type = bool
   default = false
 }
@@ -75,6 +75,11 @@ variable "is_lb_private" {
 variable "private_static_ip" {
   type = string
   default = null
+}
+
+variable "private_ip_addr_alloc" {
+  type = string
+  default = "Dynamic"
 }
 
 variable "private_ip_version" {
@@ -112,4 +117,9 @@ variable "lb_probe" {
       request_path = "/"
     }
   }
+}
+
+variable "virtual_machine_nic_ids" {
+  type = list(string)
+  default = null
 }

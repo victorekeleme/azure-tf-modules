@@ -2,8 +2,13 @@ output "vnet_name" {
   value = azurerm_virtual_network.this.name
 }
 
-output "vnet_id" {
-  value = azurerm_virtual_network.this.id
+output "vnet_attr" {
+  value = {
+    # name = azurerm_virtual_network.this.name
+    # id = azurerm_virtual_network.this.id
+    "${azurerm_virtual_network.this.name}" = "${azurerm_virtual_network.this.id}"
+  }
+
 }
 
 output "vnet_address_space" {
@@ -15,7 +20,7 @@ output "subnet_ids" {
 }
 
 output "subnet_name_id" {
-  value = { for subnet in azurerm_subnet.this : subnet.id => subnet.name }
+  value = { for subnet in azurerm_subnet.this : subnet.name => subnet.id }
 }
 
 output "subnet_routes_ids" {
