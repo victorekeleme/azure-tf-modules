@@ -32,4 +32,6 @@ module "virtual_network" {
     }
   }
   natgw_subnets = ["public"]
+
+  private_dns_zone_name = "devopsvault.com"
 }

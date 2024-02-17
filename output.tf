@@ -27,14 +27,14 @@ output "nat_gateway_ids" {
 }
 
 
-output "load_balancer_id" {
-  value = module.applb.load_balancer_id
-}
+# output "load_balancer_id" {
+#   value = module.applb.load_balancer_id
+# }
 
-output "lb_private_fip" {
-  value = module.applb.lb_private_fip
-}
+# output "lb_private_fip" {
+#   value = module.applb.lb_private_fip
+# }
 
-output "lb_be_address_pool" {
-  value = module.applb.lb_be_address_pool
-}
+# output "lb_be_address_pool" {
+#   value = module.applb.lb_be_address_pool
+# }
