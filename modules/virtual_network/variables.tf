@@ -92,17 +92,17 @@ variable "private_dns_zone_name" {
   default = null
 }
 
-# variable "a_record_sets" {
-#   type    = map(any)
-#   default = null
-# }
+variable "a_record_sets" {
+  type    = map(any)
+  default = null
+}
 
-# variable "aaaa_record_sets" {
-#   type    = map(any)
-#   default = null
-# }
+variable "aaaa_record_sets" {
+  type    = map(any)
+  default = null
+}
 
-# variable "cname_record_sets" {
-#   type    = map(any)
-#   default = null
-# }
+variable "cname_record_sets" {
+  type    = map(any)
+  default = null
+}

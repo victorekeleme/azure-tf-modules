@@ -118,29 +118,29 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   tags = local.common_tags
 }
 
-# resource "azurerm_private_dns_a_record" "this" {
-#   for_each            = var.a_record_sets != null ? var.a_record_sets : {}
-#   name                = each.key
-#   zone_name           = azurerm_private_dns_zone.this.name
-#   resource_group_name = azurerm_resource_group.this.name
-#   ttl                 = each.value.ttl
-#   records             = each.value.records
-# }
+resource "azurerm_private_dns_a_record" "this" {
+  for_each            = var.a_record_sets != null ? var.a_record_sets : {}
+  name                = each.key
+  zone_name           = azurerm_private_dns_zone.this.name
+  resource_group_name = azurerm_resource_group.this.name
+  ttl                 = each.value.ttl
+  records             = each.value.records
+}
 
-# resource "azurerm_private_dns_aaaa_record" "this" {
-#   for_each            = var.aaaa_record_sets != null ? var.aaaa_record_sets : {}
-#   name                = each.key
-#   zone_name           = azurerm_private_dns_zone.this.name
-#   resource_group_name = azurerm_resource_group.this.name
-#   ttl                 = each.value.ttl
-#   records             = each.value.records
-# }
+resource "azurerm_private_dns_aaaa_record" "this" {
+  for_each            = var.aaaa_record_sets != null ? var.aaaa_record_sets : {}
+  name                = each.key
+  zone_name           = azurerm_private_dns_zone.this.name
+  resource_group_name = azurerm_resource_group.this.name
+  ttl                 = each.value.ttl
+  records             = each.value.records
+}
 
-# resource "azurerm_private_dns_cname_record" "this" {
-#   for_each            = var.cname_record_sets != null ? var.cname_record_sets : {}
-#   name                = each.key
-#   zone_name           = azurerm_private_dns_zone.this.name
-#   resource_group_name = azurerm_resource_group.this.name
-#   ttl                 = each.value.ttl
-#   record              = each.value.records
-# }
+resource "azurerm_private_dns_cname_record" "this" {
+  for_each            = var.cname_record_sets != null ? var.cname_record_sets : {}
+  name                = each.key
+  zone_name           = azurerm_private_dns_zone.this.name
+  resource_group_name = azurerm_resource_group.this.name
+  ttl                 = each.value.ttl
+  record              = each.value.records
+}
